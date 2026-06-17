@@ -24,21 +24,21 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="px-3 py-4 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:py-3">
-        <div className="flex min-w-0 items-center gap-2">
+        <div className="flex min-w-0 items-start gap-2 group-data-[collapsible=icon]:justify-center">
           <Image
-            src="/assets/logo-mark.png"
+            src="/android-chrome-192x192.png"
             alt="MedStory Studio"
-            width={56}
-            height={62}
-            className="hidden h-7 w-auto object-contain group-data-[collapsible=icon]:block"
+            width={192}
+            height={192}
+            className="hidden size-7 object-contain group-data-[collapsible=icon]:block"
             priority
           />
           <Image
-            src="/assets/logo-sidebar.png"
+            src="/assets/logo.png"
             alt="MedStory Studio"
-            width={206}
-            height={80}
-            className="h-12 w-auto min-w-0 object-contain object-left transition-opacity group-data-[collapsible=icon]:hidden"
+            width={2352}
+            height={810}
+            className="h-12 w-auto min-w-0 object-contain object-left group-data-[collapsible=icon]:hidden"
             priority
           />
           <SidebarTrigger className="ml-auto group-data-[collapsible=icon]:hidden" />
