@@ -45,7 +45,7 @@ const DEFAULT_DOCUMENT_SECTIONS = [
 export function createDefaultDocumentContent(): DocumentContent {
   return DEFAULT_DOCUMENT_SECTIONS.flatMap((section) => [
     {
-      type: "h2",
+      type: "h3",
       children: [{ text: section }],
     },
     {

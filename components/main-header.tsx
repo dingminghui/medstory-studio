@@ -11,7 +11,7 @@ export function MainHeader({ title }: MainHeaderProps) {
   const showTrigger = isMobile || state === "collapsed";
 
   return (
-    <header className="bg-background/90 sticky top-0 z-10 flex h-14 shrink-0 items-center gap-3 px-4 backdrop-blur">
+    <header className="bg-background sticky top-0 z-10 flex h-14 shrink-0 items-center gap-3 px-4">
       {showTrigger ? <SidebarTrigger className="-ml-1" /> : null}
       {title ? (
         <h1 className="text-foreground min-w-0 truncate text-sm font-medium">
