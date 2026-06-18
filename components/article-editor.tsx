@@ -1,18 +1,22 @@
 "use client";
 
+import { useState } from "react";
 import {
   BasicBlocksPlugin,
   BasicMarksPlugin,
 } from "@platejs/basic-nodes/react";
 import { Plate, PlateContent, usePlateEditor } from "platejs/react";
 
+import { Input } from "@/components/ui/input";
 import type { DocumentContent } from "@/lib/document-model";
 
 type ArticleEditorProps = {
+  title: string;
   value: DocumentContent;
 };
 
-export function ArticleEditor({ value }: ArticleEditorProps) {
+export function ArticleEditor({ title, value }: ArticleEditorProps) {
+  const [draftTitle, setDraftTitle] = useState(title);
   const editor = usePlateEditor(
     {
       plugins: [BasicBlocksPlugin, BasicMarksPlugin],
@@ -22,11 +26,20 @@ export function ArticleEditor({ value }: ArticleEditorProps) {
   );
 
   return (
-    <section className="flex flex-1 px-4 py-6 md:px-8">
-      <div className="bg-card text-card-foreground mx-auto w-full max-w-4xl rounded-xl border shadow-xs">
+    <section className="size-full">
+      <div className="bg-card text-card-foreground mx-auto w-full max-w-4xl px-2">
+        <Input
+          aria-label="标题"
+          className="my-3 h-auto rounded-none border-0 p-0 text-xl! font-semibold shadow-none focus-visible:ring-0"
+          onChange={(event) => {
+            setDraftTitle(event.target.value);
+          }}
+          placeholder="未命名"
+          value={draftTitle}
+        />
         <Plate editor={editor}>
           <PlateContent
-            className="placeholder:text-muted-foreground min-h-[560px] px-5 py-5 text-base leading-7 outline-none focus-visible:outline-none md:px-10 md:py-8"
+            className="placeholder:text-muted-foreground min-h-140 text-base leading-7 outline-none focus-visible:outline-none"
             placeholder="开始写作..."
           />
         </Plate>
