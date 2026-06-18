@@ -33,11 +33,24 @@ export type CreateDocumentInput = z.infer<typeof CreateDocumentInputSchema>;
 export type DocumentContent = z.infer<typeof DocumentContentSchema>;
 export type DocumentResponse = z.infer<typeof DocumentResponseSchema>;
 
+const DEFAULT_DOCUMENT_SECTIONS = [
+  "引言",
+  "文献综述",
+  "方法论",
+  "结果",
+  "讨论",
+  "结论",
+];
+
 export function createDefaultDocumentContent(): DocumentContent {
-  return [
+  return DEFAULT_DOCUMENT_SECTIONS.flatMap((section) => [
+    {
+      type: "h2",
+      children: [{ text: section }],
+    },
     {
       type: "p",
       children: [{ text: "" }],
     },
-  ];
+  ]);
 }
