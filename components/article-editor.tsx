@@ -5,9 +5,17 @@ import {
   BasicBlocksPlugin,
   BasicMarksPlugin,
 } from "@platejs/basic-nodes/react";
-import { Plate, PlateContent, usePlateEditor } from "platejs/react";
+import {
+  createPlatePlugin,
+  Plate,
+  PlateContent,
+  usePlateEditor,
+} from "platejs/react";
 
-import { ArticleEditorToolbar } from "@/components/article-editor-toolbar";
+import {
+  ArticleEditorFloatingToolbar,
+  ArticleEditorToolbar,
+} from "@/components/article-editor-toolbar";
 import { Input } from "@/components/ui/input";
 import type { DocumentContent } from "@/lib/document-model";
 
@@ -16,11 +24,18 @@ type ArticleEditorProps = {
   value: DocumentContent;
 };
 
+const FloatingToolbarPlugin = createPlatePlugin({
+  key: "floating-toolbar",
+  render: {
+    afterEditable: () => <ArticleEditorFloatingToolbar />,
+  },
+});
+
 export function ArticleEditor({ title, value }: ArticleEditorProps) {
   const [draftTitle, setDraftTitle] = useState(title);
   const editor = usePlateEditor(
     {
-      plugins: [BasicBlocksPlugin, BasicMarksPlugin],
+      plugins: [BasicBlocksPlugin, BasicMarksPlugin, FloatingToolbarPlugin],
       value,
     },
     [value],

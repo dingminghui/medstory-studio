@@ -1,6 +1,12 @@
 "use client";
 
 import type { ReactNode } from "react";
+import {
+  flip,
+  offset,
+  useFloatingToolbar,
+  useFloatingToolbarState,
+} from "@platejs/floating";
 import type { LucideIcon } from "lucide-react";
 import {
   AtSignIcon,
@@ -15,9 +21,14 @@ import {
   TextIcon,
   UnderlineIcon,
   Undo2Icon,
+  WandSparklesIcon,
 } from "lucide-react";
 import { KEYS } from "platejs";
-import { useEditorState } from "platejs/react";
+import {
+  useEditorId,
+  useEditorState,
+  useEventEditorValue,
+} from "platejs/react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -40,8 +51,14 @@ type ToolbarButtonProps = {
   active?: boolean;
   children: ReactNode;
   disabled?: boolean;
+  className?: string;
   label: string;
   onPress?: () => void;
+};
+
+type ToolbarContentProps = {
+  showAskAi?: boolean;
+  showHistory?: boolean;
 };
 
 type BlockType =
@@ -76,6 +93,51 @@ function getActiveBlockType(type: unknown): BlockType {
 }
 
 export function ArticleEditorToolbar() {
+  return (
+    <div className="bg-background text-foreground border-border sticky top-14 z-10 border-b">
+      <ScrollArea className="h-9" scrollbars="horizontal">
+        <div className="flex h-9 w-max items-center gap-0.5 px-2">
+          <ToolbarContent showHistory />
+        </div>
+      </ScrollArea>
+    </div>
+  );
+}
+
+export function ArticleEditorFloatingToolbar() {
+  const editorId = useEditorId();
+  const focusedEditorId = useEventEditorValue("focus");
+  const state = useFloatingToolbarState({
+    editorId,
+    focusedEditorId,
+    floatingOptions: {
+      middleware: [offset(12), flip({ padding: 12 })],
+      placement: "top",
+    },
+  });
+  const { clickOutsideRef, hidden, props, ref } = useFloatingToolbar(state);
+
+  if (hidden) {
+    return null;
+  }
+
+  return (
+    <div ref={clickOutsideRef}>
+      <div
+        ref={ref}
+        {...props}
+        className="bg-popover text-popover-foreground ring-border/70 z-50 flex h-10 items-center gap-1 rounded-xl px-1.5 shadow-xs ring-0"
+      >
+        <ToolbarContent showAskAi />
+      </div>
+    </div>
+  );
+}
+
+function ToolbarContent({
+  showAskAi = false,
+  showHistory = false,
+}: ToolbarContentProps) {
   const editor = useEditorState();
   const activeMarks = editor.api.marks() ?? {};
   const selectedBlockType = getActiveBlockType(editor.api.block()?.[0]?.type);
@@ -108,9 +170,9 @@ export function ArticleEditorToolbar() {
   };
 
   return (
-    <div className="bg-background text-foreground border-border sticky top-14 z-10 border-b">
-      <ScrollArea className="h-9" scrollbars="horizontal">
-        <div className="flex h-9 w-max items-center gap-0.5 px-2">
+    <>
+      {showHistory && (
+        <>
           <div className="flex items-center gap-0.5">
             <ToolbarButton
               disabled={!hasUndo}
@@ -135,71 +197,83 @@ export function ArticleEditorToolbar() {
           </div>
 
           <ToolbarSeparator />
+        </>
+      )}
 
-          <BlockTypeMenu
-            onValueChange={setBlockType}
-            value={selectedBlockType}
-          />
-
-          <ToolbarSeparator />
-
-          <div className="flex items-center gap-0.5">
-            <ToolbarButton
-              active={isMarkActive(KEYS.bold)}
-              label="加粗"
-              onPress={() => {
-                toggleMark(KEYS.bold);
-              }}
-            >
-              <BoldIcon />
-            </ToolbarButton>
-            <ToolbarButton
-              active={isMarkActive(KEYS.italic)}
-              label="斜体"
-              onPress={() => {
-                toggleMark(KEYS.italic);
-              }}
-            >
-              <ItalicIcon />
-            </ToolbarButton>
-            <ToolbarButton
-              active={isMarkActive(KEYS.underline)}
-              label="下划线"
-              onPress={() => {
-                toggleMark(KEYS.underline);
-              }}
-            >
-              <UnderlineIcon />
-            </ToolbarButton>
-            <ToolbarButton
-              active={isMarkActive(KEYS.strikethrough)}
-              label="删除线"
-              onPress={() => {
-                toggleMark(KEYS.strikethrough);
-              }}
-            >
-              <StrikethroughIcon />
-            </ToolbarButton>
-          </div>
-
-          <ToolbarSeparator />
-
+      {showAskAi && (
+        <>
           <ToolbarButton
-            active={isBlockquoteActive}
-            label="引用"
-            onPress={() => {
-              editor.tf.toggleBlock(KEYS.blockquote, { wrap: true });
-              focusEditor();
-            }}
+            className="gap-1.5 px-2.5 text-sm"
+            label="Ask AI（即将推出）"
+            onPress={focusEditor}
           >
-            <AtSignIcon className="text-muted-foreground" />
-            <span className="text-foreground text-xs leading-5 font-medium">
-              引用
-            </span>
+            <WandSparklesIcon />
+            <span>Ask AI</span>
           </ToolbarButton>
-        </div>
-      </ScrollArea>
-    </div>
+
+          <ToolbarSeparator />
+        </>
+      )}
+
+      <BlockTypeMenu onValueChange={setBlockType} value={selectedBlockType} />
+
+      <ToolbarSeparator />
+
+      <div className="flex items-center gap-0.5">
+        <ToolbarButton
+          active={isMarkActive(KEYS.bold)}
+          label="加粗"
+          onPress={() => {
+            toggleMark(KEYS.bold);
+          }}
+        >
+          <BoldIcon />
+        </ToolbarButton>
+        <ToolbarButton
+          active={isMarkActive(KEYS.italic)}
+          label="斜体"
+          onPress={() => {
+            toggleMark(KEYS.italic);
+          }}
+        >
+          <ItalicIcon />
+        </ToolbarButton>
+        <ToolbarButton
+          active={isMarkActive(KEYS.underline)}
+          label="下划线"
+          onPress={() => {
+            toggleMark(KEYS.underline);
+          }}
+        >
+          <UnderlineIcon />
+        </ToolbarButton>
+        <ToolbarButton
+          active={isMarkActive(KEYS.strikethrough)}
+          label="删除线"
+          onPress={() => {
+            toggleMark(KEYS.strikethrough);
+          }}
+        >
+          <StrikethroughIcon />
+        </ToolbarButton>
+      </div>
+
+      <ToolbarSeparator />
+
+      <ToolbarButton
+        active={isBlockquoteActive}
+        label="引用"
+        onPress={() => {
+          editor.tf.toggleBlock(KEYS.blockquote, { wrap: true });
+          focusEditor();
+        }}
+      >
+        <AtSignIcon className="text-muted-foreground" />
+        <span className="text-foreground text-xs leading-5 font-medium">
+          引用
+        </span>
+      </ToolbarButton>
+    </>
   );
 }
 
@@ -237,7 +311,11 @@ function BlockTypeMenu({
           </Button>
         }
       />
-      <DropdownMenuContent align="start" className="w-36" sideOffset={6}>
+      <DropdownMenuContent
+        align="start"
+        className="ignore-click-outside/toolbar w-36"
+        sideOffset={6}
+      >
         <DropdownMenuRadioGroup
           onValueChange={(type) => {
             onValueChange(type as BlockType);
@@ -263,6 +341,7 @@ function BlockTypeMenu({
 function ToolbarButton({
   active = false,
   children,
+  className,
   disabled = false,
   label,
   onPress,
@@ -278,6 +357,7 @@ function ToolbarButton({
               "text-foreground hover:bg-muted hover:text-foreground h-7 min-w-7 gap-1 rounded-lg border-0 bg-transparent px-1.5 text-xs leading-5 font-medium",
               active && "bg-muted text-foreground",
               disabled && "pointer-events-none opacity-40",
+              className,
             )}
             disabled={disabled}
             onClick={onPress}
