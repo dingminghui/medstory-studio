@@ -1,14 +1,18 @@
 "use client";
 
 import type { ReactNode } from "react";
+import type { LucideIcon } from "lucide-react";
 import {
   AtSignIcon,
   BoldIcon,
   ChevronsUpDownIcon,
+  Heading1Icon,
+  Heading2Icon,
+  Heading3Icon,
   ItalicIcon,
-  PilcrowIcon,
   Redo2Icon,
   StrikethroughIcon,
+  TextIcon,
   UnderlineIcon,
   Undo2Icon,
 } from "lucide-react";
@@ -58,6 +62,13 @@ const BLOCK_TYPE_LABELS: Record<BlockType, string> = {
   [KEYS.h1]: "标题 1",
   [KEYS.h2]: "标题 2",
   [KEYS.h3]: "标题 3",
+};
+
+const BLOCK_TYPE_ICONS: Record<BlockType, LucideIcon> = {
+  [KEYS.p]: TextIcon,
+  [KEYS.h1]: Heading1Icon,
+  [KEYS.h2]: Heading2Icon,
+  [KEYS.h3]: Heading3Icon,
 };
 
 function getActiveBlockType(type: unknown): BlockType {
@@ -199,6 +210,8 @@ function BlockTypeMenu({
   onValueChange: (type: BlockType) => void;
   value: BlockType;
 }) {
+  const ActiveIcon = BLOCK_TYPE_ICONS[value];
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -213,7 +226,7 @@ function BlockTypeMenu({
             type="button"
             variant="ghost"
           >
-            <PilcrowIcon aria-hidden="true" data-icon="inline-start" />
+            <ActiveIcon aria-hidden="true" data-icon="inline-start" />
             <span className="min-w-16 text-left">
               {BLOCK_TYPE_LABELS[value]}
             </span>
@@ -231,11 +244,16 @@ function BlockTypeMenu({
           }}
           value={value}
         >
-          {Object.entries(BLOCK_TYPE_LABELS).map(([type, label]) => (
-            <DropdownMenuRadioItem closeOnClick key={type} value={type}>
-              {label}
-            </DropdownMenuRadioItem>
-          ))}
+          {BLOCK_TYPES.map((type) => {
+            const Icon = BLOCK_TYPE_ICONS[type];
+
+            return (
+              <DropdownMenuRadioItem closeOnClick key={type} value={type}>
+                <Icon aria-hidden="true" />
+                {BLOCK_TYPE_LABELS[type]}
+              </DropdownMenuRadioItem>
+            );
+          })}
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
