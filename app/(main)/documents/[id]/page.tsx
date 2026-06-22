@@ -22,7 +22,11 @@ export default async function DocumentPage({ params }: DocumentPageProps) {
     <>
       <MainHeader title={document.title} />
       <main className="flex flex-1">
-        <ArticleEditor title={document.title} value={document.content} />
+        <ArticleEditor
+          documentId={document.id}
+          title={document.title}
+          value={document.content}
+        />
       </main>
     </>
   );

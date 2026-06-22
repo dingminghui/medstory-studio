@@ -5,12 +5,15 @@ import {
   CreateDocumentInputSchema,
   DocumentHistoryResponseSchema,
   DocumentResponseSchema,
+  UpdateDocumentInputSchema,
 } from "@/lib/document-model";
 
 import type {
   CreateDocumentRequest,
   CreateDocumentResponse,
   ListDocumentsResponse,
+  UpdateDocumentRequest,
+  UpdateDocumentResponse,
 } from "./typings";
 
 const ApiErrorSchema = z.object({
@@ -56,6 +59,24 @@ export async function listDocuments(): Promise<ListDocumentsResponse> {
     const response = await axios.get<unknown>("/api/documents");
 
     return DocumentHistoryResponseSchema.parse(response.data);
+  } catch (error) {
+    throw new Error(getDocumentApiErrorMessage(error));
+  }
+}
+
+export async function updateDocument(
+  id: string,
+  input: UpdateDocumentRequest,
+): Promise<UpdateDocumentResponse> {
+  const payload = UpdateDocumentInputSchema.parse(input);
+
+  try {
+    const response = await axios.patch<unknown>(
+      `/api/documents/${id}`,
+      payload,
+    );
+
+    return DocumentResponseSchema.parse(response.data);
   } catch (error) {
     throw new Error(getDocumentApiErrorMessage(error));
   }

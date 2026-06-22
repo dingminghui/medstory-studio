@@ -1,16 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import {
   BasicBlocksPlugin,
   BasicMarksPlugin,
 } from "@platejs/basic-nodes/react";
-import {
-  createPlatePlugin,
-  Plate,
-  PlateContent,
-  usePlateEditor,
-} from "platejs/react";
+import { Plate, PlateContent, usePlateEditor } from "platejs/react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
   ArticleEditorFloatingToolbar,
@@ -18,14 +13,29 @@ import {
 } from "@/components/article-editor-toolbar";
 import { Input } from "@/components/ui/input";
 import type { DocumentContent } from "@/lib/document-model";
+import { useUpdateDocument } from "@/hooks/use-update-document";
+import { createPlatePlugin } from "platejs/react";
 
 type ArticleEditorProps = {
+  documentId: string;
   title: string;
   value: DocumentContent;
 };
 
-export function ArticleEditor({ title, value }: ArticleEditorProps) {
+export function ArticleEditor({
+  documentId,
+  title,
+  value,
+}: ArticleEditorProps) {
   const [draftTitle, setDraftTitle] = useState(title);
+  const [draftContent, setDraftContent] = useState(value);
+  const lastSavedSnapshotRef = useRef(
+    JSON.stringify({
+      content: value,
+      title,
+    }),
+  );
+  const { mutate: updateDocument } = useUpdateDocument(documentId);
   const floatingToolbarPlugin = useMemo(
     () =>
       createPlatePlugin({
@@ -44,9 +54,47 @@ export function ArticleEditor({ title, value }: ArticleEditorProps) {
     [floatingToolbarPlugin, value],
   );
 
+  const draftSnapshot = useMemo(
+    () =>
+      JSON.stringify({
+        content: draftContent,
+        title: draftTitle,
+      }),
+    [draftContent, draftTitle],
+  );
+
+  useEffect(() => {
+    if (draftSnapshot === lastSavedSnapshotRef.current) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      updateDocument(
+        {
+          content: draftContent,
+          title: draftTitle,
+        },
+        {
+          onSuccess: (_document, variables) => {
+            lastSavedSnapshotRef.current = JSON.stringify(variables);
+          },
+        },
+      );
+    }, 800);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [draftContent, draftSnapshot, draftTitle, updateDocument]);
+
   return (
     <section className="bg-background size-full">
-      <Plate editor={editor}>
+      <Plate
+        editor={editor}
+        onValueChange={({ value: nextValue }) => {
+          setDraftContent(nextValue as DocumentContent);
+        }}
+      >
         <ArticleEditorToolbar />
         <div className="text-foreground mx-auto w-full max-w-4xl px-2 pt-16 pb-24 md:px-10 md:pt-6">
           <Input

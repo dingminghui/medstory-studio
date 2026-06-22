@@ -55,13 +55,15 @@ export function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
+                  asChild
                   isActive={pathname === "/"}
                   className="data-active:text-primary data-active:hover:text-primary data-active:bg-transparent data-active:hover:bg-transparent"
                   tooltip="新增"
-                  render={<Link href="/" />}
                 >
-                  <PlusIcon data-icon="inline-start" />
-                  <span>新增</span>
+                  <Link href="/">
+                    <PlusIcon data-icon="inline-start" />
+                    <span>新增</span>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
@@ -103,23 +105,25 @@ export function AppSidebar() {
                 return (
                   <SidebarMenuItem key={document.id}>
                     <SidebarMenuButton
+                      asChild
                       isActive={pathname === href}
                       className="h-auto min-h-12 items-start py-1.5 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:min-h-8"
                       tooltip={document.title}
-                      render={<Link href={href} />}
                     >
-                      <FileTextIcon
-                        className="mt-0.5"
-                        data-icon="inline-start"
-                      />
-                      <span className="flex min-w-0 flex-1 flex-col gap-0.5 group-data-[collapsible=icon]:hidden">
-                        <span className="block w-full truncate leading-5">
-                          {document.title}
+                      <Link href={href}>
+                        <FileTextIcon
+                          className="mt-0.5"
+                          data-icon="inline-start"
+                        />
+                        <span className="flex min-w-0 flex-1 flex-col gap-0.5 group-data-[collapsible=icon]:hidden">
+                          <span className="block w-full truncate leading-5">
+                            {document.title}
+                          </span>
+                          <span className="text-muted-foreground text-[11px] leading-4">
+                            {formatMonthDay(document.updatedAt)}
+                          </span>
                         </span>
-                        <span className="text-muted-foreground text-[11px] leading-4">
-                          {formatMonthDay(document.updatedAt)}
-                        </span>
-                      </span>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );

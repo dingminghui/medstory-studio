@@ -45,6 +45,20 @@ export const CreateDocumentInputSchema = z.object({
     .max(MAX_DOCUMENT_TITLE_LENGTH, "标题不能超过 255 个字符"),
 });
 
+export const UpdateDocumentInputSchema = z
+  .object({
+    title: z
+      .string()
+      .trim()
+      .min(1, "请输入文章标题")
+      .max(MAX_DOCUMENT_TITLE_LENGTH, "标题不能超过 255 个字符")
+      .optional(),
+    content: DocumentContentSchema.optional(),
+  })
+  .refine((value) => value.title !== undefined || value.content !== undefined, {
+    message: "至少提供一个待更新字段",
+  });
+
 export const DocumentResponseSchema = z.object({
   id: z.string().uuid(),
   title: z.string(),
@@ -63,6 +77,7 @@ export const DocumentHistoryItemSchema = z.object({
 export const DocumentHistoryResponseSchema = z.array(DocumentHistoryItemSchema);
 
 export type CreateDocumentInput = z.infer<typeof CreateDocumentInputSchema>;
+export type UpdateDocumentInput = z.infer<typeof UpdateDocumentInputSchema>;
 export type DocumentResponse = z.infer<typeof DocumentResponseSchema>;
 export type DocumentHistoryItem = z.infer<typeof DocumentHistoryItemSchema>;
 export type DocumentHistoryResponse = z.infer<

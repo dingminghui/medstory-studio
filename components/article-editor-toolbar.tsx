@@ -124,7 +124,7 @@ export function ArticleEditorFloatingToolbar() {
       <div
         ref={ref}
         {...props}
-        className="bg-popover text-popover-foreground ring-border/70 z-50 flex h-10 items-center gap-1 rounded-xl px-1.5 shadow-xs ring-0"
+        className="bg-popover text-popover-foreground ring-border/70 z-50 flex h-10 items-center gap-1 rounded-xl px-1.5 shadow-md ring-0"
       >
         <ToolbarContent />
       </div>
@@ -268,29 +268,25 @@ function BlockTypeMenu({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button
-            aria-label="段落类型"
-            className="text-foreground hover:bg-muted hover:text-foreground h-7 min-w-32 gap-2 rounded-lg border-0 bg-transparent px-1.5 text-sm font-medium"
-            onMouseDown={(event) => {
-              event.preventDefault();
-            }}
-            size="default"
-            type="button"
-            variant="ghost"
-          >
-            <ActiveIcon aria-hidden="true" data-icon="inline-start" />
-            <span className="min-w-16 text-left">
-              {BLOCK_TYPE_LABELS[value]}
-            </span>
-            <ChevronsUpDownIcon
-              aria-hidden="true"
-              className="text-muted-foreground ml-auto"
-            />
-          </Button>
-        }
-      />
+      <DropdownMenuTrigger asChild>
+        <Button
+          aria-label="段落类型"
+          className="text-foreground hover:bg-muted hover:text-foreground h-7 min-w-32 gap-2 rounded-lg border-0 bg-transparent px-1.5 text-sm font-medium"
+          onMouseDown={(event) => {
+            event.preventDefault();
+          }}
+          size="default"
+          type="button"
+          variant="ghost"
+        >
+          <ActiveIcon aria-hidden="true" data-icon="inline-start" />
+          <span className="min-w-16 text-left">{BLOCK_TYPE_LABELS[value]}</span>
+          <ChevronsUpDownIcon
+            aria-hidden="true"
+            className="text-muted-foreground ml-auto"
+          />
+        </Button>
+      </DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"
         className="ignore-click-outside/toolbar w-36"
@@ -306,7 +302,7 @@ function BlockTypeMenu({
             const Icon = BLOCK_TYPE_ICONS[type];
 
             return (
-              <DropdownMenuRadioItem closeOnClick key={type} value={type}>
+              <DropdownMenuRadioItem key={type} value={type}>
                 <Icon aria-hidden="true" />
                 {BLOCK_TYPE_LABELS[type]}
               </DropdownMenuRadioItem>
@@ -328,31 +324,29 @@ function ToolbarButton({
 }: ToolbarButtonProps) {
   return (
     <Tooltip>
-      <TooltipTrigger
-        render={
-          <Button
-            aria-label={label}
-            aria-pressed={active || undefined}
-            className={cn(
-              "text-foreground hover:bg-muted hover:text-foreground h-7 min-w-7 gap-1 rounded-lg border-0 bg-transparent px-1.5 text-xs leading-5 font-medium",
-              active && "bg-muted text-foreground",
-              disabled && "pointer-events-none opacity-40",
-              className,
-            )}
-            disabled={disabled}
-            onClick={onPress}
-            onMouseDown={(event) => {
-              event.preventDefault();
-            }}
-            size="default"
-            type="button"
-            variant="ghost"
-          >
-            {children}
-          </Button>
-        }
-      />
-      <TooltipContent sideOffset={8}>{label}</TooltipContent>
+      <TooltipTrigger asChild>
+        <Button
+          aria-label={label}
+          aria-pressed={active || undefined}
+          className={cn(
+            "text-foreground hover:bg-muted hover:text-foreground h-7 min-w-7 gap-1 rounded-lg border-0 bg-transparent px-1.5 text-xs leading-5 font-medium",
+            active && "bg-muted text-foreground",
+            disabled && "pointer-events-none opacity-40",
+            className,
+          )}
+          disabled={disabled}
+          onClick={onPress}
+          onMouseDown={(event) => {
+            event.preventDefault();
+          }}
+          size="default"
+          type="button"
+          variant="ghost"
+        >
+          {children}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>{label}</TooltipContent>
     </Tooltip>
   );
 }
