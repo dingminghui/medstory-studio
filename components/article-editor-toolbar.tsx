@@ -21,7 +21,6 @@ import {
   TextIcon,
   UnderlineIcon,
   Undo2Icon,
-  WandSparklesIcon,
 } from "lucide-react";
 import { KEYS } from "platejs";
 import {
@@ -57,7 +56,6 @@ type ToolbarButtonProps = {
 };
 
 type ToolbarContentProps = {
-  showAskAi?: boolean;
   showHistory?: boolean;
 };
 
@@ -128,16 +126,13 @@ export function ArticleEditorFloatingToolbar() {
         {...props}
         className="bg-popover text-popover-foreground ring-border/70 z-50 flex h-10 items-center gap-1 rounded-xl px-1.5 shadow-xs ring-0"
       >
-        <ToolbarContent showAskAi />
+        <ToolbarContent />
       </div>
     </div>
   );
 }
 
-function ToolbarContent({
-  showAskAi = false,
-  showHistory = false,
-}: ToolbarContentProps) {
+function ToolbarContent({ showHistory = false }: ToolbarContentProps) {
   const editor = useEditorState();
   const activeMarks = editor.api.marks() ?? {};
   const selectedBlockType = getActiveBlockType(editor.api.block()?.[0]?.type);
@@ -195,21 +190,6 @@ function ToolbarContent({
               <Redo2Icon />
             </ToolbarButton>
           </div>
-
-          <ToolbarSeparator />
-        </>
-      )}
-
-      {showAskAi && (
-        <>
-          <ToolbarButton
-            className="gap-1.5 px-2.5 text-sm"
-            label="Ask AI（即将推出）"
-            onPress={focusEditor}
-          >
-            <WandSparklesIcon />
-            <span>Ask AI</span>
-          </ToolbarButton>
 
           <ToolbarSeparator />
         </>

@@ -8,9 +8,19 @@ import {
   createDefaultDocumentContent,
 } from "@/lib/document-model";
 import { getDb } from "@/lib/db";
-import { serializeDocument } from "@/lib/documents";
+import {
+  listDocumentHistory,
+  serializeDocument,
+  serializeDocumentHistoryItem,
+} from "@/lib/documents";
 
 export const runtime = "nodejs";
+
+export async function GET() {
+  const history = await listDocumentHistory();
+
+  return NextResponse.json(history.map(serializeDocumentHistoryItem));
+}
 
 export async function POST(request: Request) {
   let body: unknown;

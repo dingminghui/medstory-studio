@@ -3,10 +3,15 @@ import { z } from "zod";
 
 import {
   CreateDocumentInputSchema,
+  DocumentHistoryResponseSchema,
   DocumentResponseSchema,
 } from "@/lib/document-model";
 
-import type { CreateDocumentRequest, CreateDocumentResponse } from "./typings";
+import type {
+  CreateDocumentRequest,
+  CreateDocumentResponse,
+  ListDocumentsResponse,
+} from "./typings";
 
 const ApiErrorSchema = z.object({
   error: z.string(),
@@ -41,6 +46,16 @@ export async function createDocument(
     const response = await axios.post<unknown>("/api/documents", payload);
 
     return DocumentResponseSchema.parse(response.data);
+  } catch (error) {
+    throw new Error(getDocumentApiErrorMessage(error));
+  }
+}
+
+export async function listDocuments(): Promise<ListDocumentsResponse> {
+  try {
+    const response = await axios.get<unknown>("/api/documents");
+
+    return DocumentHistoryResponseSchema.parse(response.data);
   } catch (error) {
     throw new Error(getDocumentApiErrorMessage(error));
   }

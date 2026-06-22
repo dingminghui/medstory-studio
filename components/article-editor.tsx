@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   BasicBlocksPlugin,
   BasicMarksPlugin,
@@ -24,21 +24,24 @@ type ArticleEditorProps = {
   value: DocumentContent;
 };
 
-const FloatingToolbarPlugin = createPlatePlugin({
-  key: "floating-toolbar",
-  render: {
-    afterEditable: () => <ArticleEditorFloatingToolbar />,
-  },
-});
-
 export function ArticleEditor({ title, value }: ArticleEditorProps) {
   const [draftTitle, setDraftTitle] = useState(title);
+  const floatingToolbarPlugin = useMemo(
+    () =>
+      createPlatePlugin({
+        key: "floating-toolbar",
+        render: {
+          afterEditable: ArticleEditorFloatingToolbar,
+        },
+      }),
+    [],
+  );
   const editor = usePlateEditor(
     {
-      plugins: [BasicBlocksPlugin, BasicMarksPlugin, FloatingToolbarPlugin],
+      plugins: [BasicBlocksPlugin, BasicMarksPlugin, floatingToolbarPlugin],
       value,
     },
-    [value],
+    [floatingToolbarPlugin, value],
   );
 
   return (
