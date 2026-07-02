@@ -63,7 +63,7 @@ function ArticleEditorLeaf({ attributes, children, leaf }: RenderLeafProps) {
           "rounded bg-emerald-100/85 px-0.5 ring-1 ring-emerald-200/80 selection:bg-emerald-200/95 dark:bg-emerald-500/20 dark:ring-emerald-400/25 dark:selection:bg-emerald-400/35",
         isSuggestionSpan &&
           suggestionType === "remove" &&
-          "text-foreground/75 rounded bg-rose-100/85 px-0.5 line-through decoration-rose-500 decoration-2 selection:bg-rose-200/95 dark:bg-rose-500/20 dark:selection:bg-rose-400/35",
+          "rounded bg-rose-100/85 px-0.5 text-foreground/75 line-through decoration-rose-500 decoration-2 selection:bg-rose-200/95 dark:bg-rose-500/20 dark:selection:bg-rose-400/35",
       )}
       data-suggestion-leaf={
         isSuggestionSpan ? (suggestionType ?? "") : undefined
@@ -173,7 +173,7 @@ export function ArticleEditor({
   }, [draftContent, draftSnapshot, draftTitle, updateDocument]);
 
   return (
-    <section className="bg-background size-full">
+    <section className="size-full bg-background">
       <Plate
         editor={editor}
         onValueChange={({ value: nextValue }) => {
@@ -181,10 +181,10 @@ export function ArticleEditor({
         }}
       >
         <ArticleEditorToolbar />
-        <div className="text-foreground mx-auto w-full max-w-4xl px-2 pt-16 pb-24 md:px-10 md:pt-6">
+        <div className="mx-auto w-full max-w-4xl px-2 pt-16 pb-24 text-foreground md:px-10 md:pt-6">
           <Input
             aria-label="标题"
-            className="placeholder:text-muted-foreground border-b-foreground/5 mb-3 h-auto rounded-none border-0 border-b! px-0 pb-4 leading-tight font-semibold shadow-none focus-visible:ring-0 md:mb-5 md:text-3xl!"
+            className="mb-3 h-auto rounded-none border-0 border-b! border-b-foreground/5 px-0 pb-4 leading-tight font-semibold shadow-none placeholder:text-muted-foreground focus-visible:ring-0 md:mb-5 md:text-3xl!"
             onChange={(event) => {
               setDraftTitle(event.target.value);
             }}
@@ -192,7 +192,7 @@ export function ArticleEditor({
             value={draftTitle}
           />
           <PlateContent
-            className="placeholder:text-muted-foreground [&_blockquote]:border-border [&_blockquote]:text-muted-foreground min-h-140 text-base leading-7 outline-none focus-visible:outline-none [&_blockquote]:border-l-2 [&_blockquote]:pl-4 [&_h1]:mt-8 [&_h1]:mb-4 [&_h1]:text-2xl [&_h1]:leading-tight [&_h1]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3 [&_h2]:text-xl [&_h2]:leading-tight [&_h2]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_h3]:text-lg [&_h3]:leading-snug [&_h3]:font-semibold [&_p]:my-2"
+            className="min-h-140 text-base leading-7 outline-none placeholder:text-muted-foreground focus-visible:outline-none [&_blockquote]:border-l-2 [&_blockquote]:border-border [&_blockquote]:pl-4 [&_blockquote]:text-muted-foreground [&_h1]:mt-8 [&_h1]:mb-4 [&_h1]:text-2xl [&_h1]:leading-tight [&_h1]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3 [&_h2]:text-xl [&_h2]:leading-tight [&_h2]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_h3]:text-lg [&_h3]:leading-snug [&_h3]:font-semibold [&_p]:my-2"
             placeholder="开始写作..."
             renderLeaf={(props) => <ArticleEditorLeaf {...props} />}
           />

@@ -125,11 +125,11 @@ function ArticleEditorAILoadingBar() {
   }
 
   return (
-    <div className="bg-popover fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-md border px-3 py-1.5 text-sm shadow-md">
-      <LoaderCircleIcon className="text-muted-foreground size-4 animate-spin" />
+    <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-md border bg-popover px-3 py-1.5 text-sm shadow-md">
+      <LoaderCircleIcon className="size-4 animate-spin text-muted-foreground" />
       <span className="text-muted-foreground">AI 正在处理...</span>
       <button
-        className="text-muted-foreground hover:text-foreground text-xs"
+        className="text-xs text-muted-foreground hover:text-foreground"
         onClick={() => {
           editor.getApi(AIChatPlugin).aiChat.stop();
         }}
@@ -143,13 +143,13 @@ function ArticleEditorAILoadingBar() {
 
 function ArticleEditorAIHeader() {
   return (
-    <div className="border-border/80 flex items-center gap-2 border-b px-3 py-2">
-      <span className="bg-primary text-primary-foreground flex size-6 shrink-0 items-center justify-center rounded-md">
+    <div className="flex items-center gap-2 border-b border-border/80 px-3 py-2">
+      <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
         <BotMessageSquareIcon className="size-3.5" />
       </span>
       <div className="min-w-0">
-        <div className="text-foreground text-xs font-medium">Ask AI</div>
-        <div className="text-muted-foreground text-xs leading-4">
+        <div className="text-xs font-medium text-foreground">Ask AI</div>
+        <div className="text-xs leading-4 text-muted-foreground">
           选择对选中文本的处理方式
         </div>
       </div>
@@ -172,14 +172,14 @@ function AskAICommandItem({
       onSelect={onSelect}
       value={command.value}
     >
-      <span className="bg-muted text-foreground mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-md">
+      <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-md bg-muted text-foreground">
         <Icon className="size-4" />
       </span>
       <span className="min-w-0">
-        <span className="text-foreground block text-sm leading-5 font-medium">
+        <span className="block text-sm leading-5 font-medium text-foreground">
           {command.label}
         </span>
-        <span className="text-muted-foreground block text-xs leading-5">
+        <span className="block text-xs leading-5 text-muted-foreground">
           {command.description}
         </span>
       </span>
@@ -214,7 +214,7 @@ export function ArticleEditorAIMenu() {
   const resultActions = useMemo<AskAIAction[]>(
     () => [
       {
-        icon: <CheckIcon className="text-muted-foreground size-4" />,
+        icon: <CheckIcon className="size-4 text-muted-foreground" />,
         label: "接受结果",
         onSelect: () => {
           editor.getTransforms(AIChatPlugin).aiChat.accept();
@@ -223,7 +223,7 @@ export function ArticleEditorAIMenu() {
         value: "accept",
       },
       {
-        icon: <RotateCcwIcon className="text-muted-foreground size-4" />,
+        icon: <RotateCcwIcon className="size-4 text-muted-foreground" />,
         label: "重新生成",
         onSelect: () => {
           editor.getApi(AIChatPlugin).aiChat.reload();
@@ -231,7 +231,7 @@ export function ArticleEditorAIMenu() {
         value: "retry",
       },
       {
-        icon: <XIcon className="text-muted-foreground size-4" />,
+        icon: <XIcon className="size-4 text-muted-foreground" />,
         label: "放弃修改",
         onSelect: () => {
           editor.getTransforms(AIPlugin).ai.undo();
@@ -397,7 +397,7 @@ export function ArticleEditorAIMenu() {
           }}
           side="bottom"
         >
-          <Command className="border-border/90 bg-popover w-full rounded-lg border shadow-md">
+          <Command className="w-full rounded-lg border border-border/90 bg-popover shadow-md">
             <ArticleEditorAIHeader />
 
             <CommandList>

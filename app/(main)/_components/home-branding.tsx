@@ -11,7 +11,7 @@ export function HomeBranding() {
         className="object-contain"
         priority
       />
-      <p className="text-muted-foreground text-center text-sm">
+      <p className="text-center text-sm text-muted-foreground">
         输入文章标题或写作需求，AI 将辅助你完成医学写作
       </p>
     </div>

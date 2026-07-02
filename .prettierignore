@@ -4,6 +4,7 @@ out
 build
 coverage
 pnpm-lock.yaml
+drizzle/*.sql
 *.min.js
 *.min.css
 .env*

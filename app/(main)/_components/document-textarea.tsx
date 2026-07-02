@@ -50,7 +50,7 @@ export function DocumentTextarea({
         }}
       />
 
-      <div className="text-muted-foreground pointer-events-none absolute top-4 right-4 left-4 z-0 truncate overflow-hidden text-base/6">
+      <div className="pointer-events-none absolute top-4 right-4 left-4 z-0 truncate overflow-hidden text-base/6 text-muted-foreground">
         {showPlaceholder ? (
           <TextType
             text={PLACEHOLDER_TEXTS}

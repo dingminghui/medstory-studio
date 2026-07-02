@@ -72,7 +72,7 @@ const SheetContent = React.forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          "bg-popover text-popover-foreground data-[state=open]:animate-in fixed z-50 flex flex-col gap-4 bg-clip-padding text-sm shadow-lg transition duration-200 ease-in-out data-[state=closed]:opacity-0",
+          "fixed z-50 flex flex-col gap-4 bg-popover bg-clip-padding text-sm text-popover-foreground shadow-lg transition duration-200 ease-in-out data-[state=closed]:opacity-0 data-[state=open]:animate-in",
           sideClasses[side],
           className,
         )}
@@ -126,7 +126,7 @@ const SheetTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      "font-heading text-foreground text-base font-medium",
+      "font-heading text-base font-medium text-foreground",
       className,
     )}
     data-slot="sheet-title"
@@ -141,7 +141,7 @@ const SheetDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn("text-muted-foreground text-sm", className)}
+    className={cn("text-sm text-muted-foreground", className)}
     data-slot="sheet-description"
     {...props}
   />

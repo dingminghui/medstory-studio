@@ -36,7 +36,7 @@ export function HomeInputCard() {
   };
 
   return (
-    <div className="border-border bg-card flex w-full flex-col overflow-hidden rounded-xl border shadow-xs transition-shadow focus-within:shadow-sm">
+    <div className="flex w-full flex-col overflow-hidden rounded-xl border border-border bg-card shadow-xs transition-shadow focus-within:shadow-sm">
       <form
         ref={formRef}
         onSubmit={(event) => {
@@ -56,7 +56,7 @@ export function HomeInputCard() {
           }}
         />
 
-        <div className="border-border flex items-center justify-between gap-2 border-t px-4 py-2.5">
+        <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2.5">
           <Badge className="cursor-pointer gap-1 text-xs" variant="secondary">
             初始模板
           </Badge>

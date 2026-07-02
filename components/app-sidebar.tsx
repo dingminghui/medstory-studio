@@ -18,16 +18,18 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useKnowledgeBasePanel } from "@/components/knowledge-base-panel";
 import { useDocumentHistory } from "@/hooks/use-document-history";
 import { cn } from "@/lib/utils";
-import { formatMonthDay } from "@/lib/utils/date";
+import { formatDate } from "@/lib/utils/date";
 
 export function AppSidebar() {
   const pathname = usePathname();
   const documentHistory = useDocumentHistory();
+  const knowledgeBasePanel = useKnowledgeBasePanel();
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar className="group-data-[side=left]:border-r-0" collapsible="icon">
       <SidebarHeader className="px-3 py-4 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:py-3">
         <div className="flex min-w-0 items-start gap-2 group-data-[collapsible=icon]:justify-center">
           <Image
@@ -57,7 +59,7 @@ export function AppSidebar() {
                 <SidebarMenuButton
                   asChild
                   isActive={pathname === "/"}
-                  className="data-active:text-primary data-active:hover:text-primary data-active:bg-transparent data-active:hover:bg-transparent"
+                  className="data-active:bg-transparent data-active:text-primary data-active:hover:bg-transparent data-active:hover:text-primary"
                   tooltip="新增"
                 >
                   <Link href="/">
@@ -68,9 +70,12 @@ export function AppSidebar() {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  className="text-muted-foreground"
+                  className="text-muted-foreground data-active:bg-transparent data-active:text-primary data-active:hover:bg-transparent data-active:hover:text-primary"
+                  isActive={knowledgeBasePanel.open}
                   tooltip="知识库"
-                  onClick={() => {}}
+                  onClick={() => {
+                    knowledgeBasePanel.toggle();
+                  }}
                 >
                   <BookOpenIcon data-icon="inline-start" />
                   <span>知识库</span>
@@ -93,7 +98,7 @@ export function AppSidebar() {
 
               {documentHistory.isError && (
                 <SidebarMenuItem>
-                  <div className="text-muted-foreground px-2 py-1.5 text-xs group-data-[collapsible=icon]:hidden">
+                  <div className="px-2 py-1.5 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
                     历史加载失败
                   </div>
                 </SidebarMenuItem>
@@ -119,8 +124,8 @@ export function AppSidebar() {
                           <span className="block w-full truncate leading-5">
                             {document.title}
                           </span>
-                          <span className="text-muted-foreground text-[11px] leading-4">
-                            {formatMonthDay(document.updatedAt)}
+                          <span className="text-[11px] leading-4 text-muted-foreground">
+                            {formatDate(document.updatedAt)}
                           </span>
                         </span>
                       </Link>
@@ -131,7 +136,7 @@ export function AppSidebar() {
 
               {documentHistory.data?.length === 0 && (
                 <SidebarMenuItem>
-                  <div className="text-muted-foreground px-2 py-1.5 text-xs group-data-[collapsible=icon]:hidden">
+                  <div className="px-2 py-1.5 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
                     暂无历史文档
                   </div>
                 </SidebarMenuItem>
@@ -149,10 +154,10 @@ function DocumentHistorySkeleton({ className }: { className?: string }) {
   return (
     <SidebarMenuItem>
       <div className="flex h-8 items-center gap-2 rounded-md px-2 group-data-[collapsible=icon]:justify-center">
-        <div className="bg-muted size-4 shrink-0 animate-pulse rounded" />
+        <div className="size-4 shrink-0 animate-pulse rounded bg-muted" />
         <div
           className={cn(
-            "bg-muted h-4 animate-pulse rounded group-data-[collapsible=icon]:hidden",
+            "h-4 animate-pulse rounded bg-muted group-data-[collapsible=icon]:hidden",
             className,
           )}
         />

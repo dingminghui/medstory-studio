@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
 
-export function formatMonthDay(value: string | Date) {
-  return dayjs(value).format("MM/DD");
+export function formatDate(value: string | Date, format = "MM/DD") {
+  return dayjs(value).format(format);
 }

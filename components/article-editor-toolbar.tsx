@@ -94,7 +94,7 @@ function getActiveBlockType(type: unknown): BlockType {
 
 export function ArticleEditorToolbar() {
   return (
-    <div className="bg-background text-foreground border-border sticky top-14 z-2 border-b">
+    <div className="sticky top-14 z-2 border-b border-border bg-background text-foreground">
       <ScrollArea className="h-9" scrollbars="horizontal">
         <div className="flex h-9 w-max items-center gap-0.5 px-2">
           <ToolbarContent showHistory />
@@ -126,7 +126,7 @@ export function ArticleEditorFloatingToolbar() {
       <div
         ref={ref}
         {...props}
-        className="bg-popover text-popover-foreground ring-border/70 z-50 flex h-10 items-center gap-1 rounded-xl px-1.5 shadow-md ring-0"
+        className="z-50 flex h-10 items-center gap-1 rounded-xl bg-popover px-1.5 text-popover-foreground shadow-md ring-0 ring-border/70"
       >
         <ToolbarContent />
       </div>
@@ -179,7 +179,7 @@ function ToolbarContent({ showHistory = false }: ToolbarContentProps) {
             }}
           >
             <MessageCircleQuestionIcon className="text-muted-foreground" />
-            <span className="text-foreground text-sm leading-5 font-medium">
+            <span className="text-sm leading-5 font-medium text-foreground">
               问 AI
             </span>
           </ToolbarButton>
@@ -271,7 +271,7 @@ function ToolbarContent({ showHistory = false }: ToolbarContentProps) {
         }}
       >
         <AtSignIcon className="text-muted-foreground" />
-        <span className="text-foreground text-sm leading-5 font-medium">
+        <span className="text-sm leading-5 font-medium text-foreground">
           引用
         </span>
       </ToolbarButton>
@@ -293,7 +293,7 @@ function BlockTypeMenu({
       <DropdownMenuTrigger asChild>
         <Button
           aria-label="段落类型"
-          className="text-foreground hover:bg-muted hover:text-foreground h-7 min-w-32 gap-2 rounded-lg border-0 bg-transparent px-1.5 text-sm font-medium"
+          className="h-7 min-w-32 gap-2 rounded-lg border-0 bg-transparent px-1.5 text-sm font-medium text-foreground hover:bg-muted hover:text-foreground"
           onMouseDown={(event) => {
             event.preventDefault();
           }}
@@ -305,7 +305,7 @@ function BlockTypeMenu({
           <span className="min-w-16 text-left">{BLOCK_TYPE_LABELS[value]}</span>
           <ChevronsUpDownIcon
             aria-hidden="true"
-            className="text-muted-foreground ml-auto"
+            className="ml-auto text-muted-foreground"
           />
         </Button>
       </DropdownMenuTrigger>
@@ -351,7 +351,7 @@ function ToolbarButton({
           aria-label={label}
           aria-pressed={active || undefined}
           className={cn(
-            "text-foreground hover:bg-muted hover:text-foreground h-7 min-w-7 gap-1 rounded-lg border-0 bg-transparent px-1.5 text-sm leading-5 font-medium",
+            "h-7 min-w-7 gap-1 rounded-lg border-0 bg-transparent px-1.5 text-sm leading-5 font-medium text-foreground hover:bg-muted hover:text-foreground",
             active && "bg-muted text-foreground",
             disabled && "pointer-events-none opacity-40",
             className,
@@ -377,7 +377,7 @@ function ToolbarSeparator() {
   return (
     <Separator
       aria-hidden="true"
-      className="bg-border mx-1 h-4! self-center!"
+      className="mx-1 h-4! self-center! bg-border"
       orientation="vertical"
     />
   );

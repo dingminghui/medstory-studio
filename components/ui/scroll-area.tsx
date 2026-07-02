@@ -23,7 +23,7 @@ function ScrollArea({
     >
       <ScrollAreaPrimitive.Viewport
         className={cn(
-          "focus-visible:ring-ring/50 size-full rounded-[inherit] focus-visible:ring-[3px] focus-visible:outline-none",
+          "size-full rounded-[inherit] focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none",
           viewportClassName,
         )}
         data-slot="scroll-area-viewport"
@@ -59,7 +59,7 @@ const ScrollBar = React.forwardRef<
     {...props}
   >
     <ScrollAreaPrimitive.ScrollAreaThumb
-      className="bg-border relative flex-1 rounded-full"
+      className="relative flex-1 rounded-full bg-border"
       data-slot="scroll-area-thumb"
     />
   </ScrollAreaPrimitive.ScrollAreaScrollbar>
