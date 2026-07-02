@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { AIChatPlugin } from "@platejs/ai/react";
 import {
   flip,
   offset,
@@ -16,6 +17,7 @@ import {
   Heading2Icon,
   Heading3Icon,
   ItalicIcon,
+  MessageCircleQuestionIcon,
   Redo2Icon,
   StrikethroughIcon,
   TextIcon,
@@ -92,7 +94,7 @@ function getActiveBlockType(type: unknown): BlockType {
 
 export function ArticleEditorToolbar() {
   return (
-    <div className="bg-background text-foreground border-border sticky top-14 z-10 border-b">
+    <div className="bg-background text-foreground border-border sticky top-14 z-2 border-b">
       <ScrollArea className="h-9" scrollbars="horizontal">
         <div className="flex h-9 w-max items-center gap-0.5 px-2">
           <ToolbarContent showHistory />
@@ -139,6 +141,7 @@ function ToolbarContent({ showHistory = false }: ToolbarContentProps) {
   const isBlockquoteActive = editor.api.some({
     match: { type: KEYS.blockquote },
   });
+  const isTextSelectionExpanded = editor.api.isExpanded();
 
   const hasUndo = (editor.history?.undos.length ?? 0) > 0;
   const hasRedo = (editor.history?.redos.length ?? 0) > 0;
@@ -166,6 +169,25 @@ function ToolbarContent({ showHistory = false }: ToolbarContentProps) {
 
   return (
     <>
+      {!showHistory && isTextSelectionExpanded ? (
+        <>
+          <ToolbarButton
+            className="pr-2"
+            label="问 AI"
+            onPress={() => {
+              editor.getApi(AIChatPlugin).aiChat.show();
+            }}
+          >
+            <MessageCircleQuestionIcon className="text-muted-foreground" />
+            <span className="text-foreground text-sm leading-5 font-medium">
+              问 AI
+            </span>
+          </ToolbarButton>
+
+          <ToolbarSeparator />
+        </>
+      ) : null}
+
       {showHistory && (
         <>
           <div className="flex items-center gap-0.5">
@@ -249,7 +271,7 @@ function ToolbarContent({ showHistory = false }: ToolbarContentProps) {
         }}
       >
         <AtSignIcon className="text-muted-foreground" />
-        <span className="text-foreground text-xs leading-5 font-medium">
+        <span className="text-foreground text-sm leading-5 font-medium">
           引用
         </span>
       </ToolbarButton>
@@ -329,7 +351,7 @@ function ToolbarButton({
           aria-label={label}
           aria-pressed={active || undefined}
           className={cn(
-            "text-foreground hover:bg-muted hover:text-foreground h-7 min-w-7 gap-1 rounded-lg border-0 bg-transparent px-1.5 text-xs leading-5 font-medium",
+            "text-foreground hover:bg-muted hover:text-foreground h-7 min-w-7 gap-1 rounded-lg border-0 bg-transparent px-1.5 text-sm leading-5 font-medium",
             active && "bg-muted text-foreground",
             disabled && "pointer-events-none opacity-40",
             className,

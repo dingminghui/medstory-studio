@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "dotenv -e .env.dev -e .env.local -- next dev",
+    "dev": "dotenv -e .env.dev -- next dev",
     "build": "dotenv -e .env.prod -- next build",
     "build:dev": "dotenv -e .env.dev -- next build",
     "start": "dotenv -e .env.prod -e .env.local -- next start",
@@ -16,9 +16,12 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "@ai-sdk/openai-compatible": "^2.0.51",
+    "@ai-sdk/react": "^3.0.210",
     "@ariakit/react": "^0.4.29",
     "@emoji-mart/data": "1.2.1",
     "@faker-js/faker": "^10.5.0",
+    "@platejs/ai": "^53.2.2",
     "@platejs/basic-nodes": "^53.0.0",
     "@platejs/basic-styles": "^53.0.0",
     "@platejs/callout": "^53.0.0",
@@ -55,6 +58,7 @@
     "@radix-ui/react-tooltip": "^1.2.10",
     "@tanstack/react-query": "^5.101.0",
     "@udecode/cn": "^52.3.4",
+    "ai": "^6.0.208",
     "axios": "^1.18.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

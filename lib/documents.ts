@@ -2,7 +2,10 @@ import { desc, eq } from "drizzle-orm";
 
 import { documents } from "@/db/schema";
 import { getDb } from "@/lib/db";
-import type { UpdateDocumentInput } from "@/lib/document-model";
+import {
+  normalizeDocumentContent,
+  type UpdateDocumentInput,
+} from "@/lib/document-model";
 
 export type DocumentRecord = typeof documents.$inferSelect;
 
@@ -37,7 +40,9 @@ export async function updateDocumentById(
     .update(documents)
     .set({
       ...(input.title !== undefined ? { title: input.title } : {}),
-      ...(input.content !== undefined ? { content: input.content } : {}),
+      ...(input.content !== undefined
+        ? { content: normalizeDocumentContent(input.content) }
+        : {}),
       updatedAt: new Date(),
     })
     .where(eq(documents.id, id))

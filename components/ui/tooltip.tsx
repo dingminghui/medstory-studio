@@ -46,7 +46,11 @@ const TooltipContent = React.forwardRef<
       {...props}
     >
       {props.children}
-      <TooltipPrimitive.Arrow className="bg-foreground fill-foreground size-2.5 rotate-45 rounded-[2px]" />
+      <TooltipPrimitive.Arrow
+        className="fill-foreground"
+        height={5}
+        width={10}
+      />
     </TooltipPrimitive.Content>
   </TooltipPrimitive.Portal>
 ));

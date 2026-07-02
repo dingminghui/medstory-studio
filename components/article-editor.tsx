@@ -1,19 +1,32 @@
 "use client";
 
+import { AI_PREVIEW_KEY } from "@platejs/ai";
+import { BlockSelectionPlugin } from "@platejs/selection/react";
+import { getTransientSuggestionKey } from "@platejs/suggestion";
+import { SuggestionPlugin } from "@platejs/suggestion/react";
+import { KEYS, type RenderLeafProps } from "platejs";
 import {
-  BasicBlocksPlugin,
-  BasicMarksPlugin,
-} from "@platejs/basic-nodes/react";
-import { Plate, PlateContent, usePlateEditor } from "platejs/react";
+  Plate,
+  PlateContent,
+  useEditorRef,
+  usePlateEditor,
+} from "platejs/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import {
+  ArticleEditorAIChatPlugin,
+  ArticleEditorAIPlugin,
+} from "@/components/article-editor-ai";
 import {
   ArticleEditorFloatingToolbar,
   ArticleEditorToolbar,
 } from "@/components/article-editor-toolbar";
 import { Input } from "@/components/ui/input";
+import { ArticleEditorCorePlugins } from "@/lib/article-editor-kit";
 import type { DocumentContent } from "@/lib/document-model";
+import { normalizeDocumentContent } from "@/lib/document-model";
 import { useUpdateDocument } from "@/hooks/use-update-document";
+import { cn } from "@/lib/utils";
 import { createPlatePlugin } from "platejs/react";
 
 type ArticleEditorProps = {
@@ -22,13 +35,74 @@ type ArticleEditorProps = {
   value: DocumentContent;
 };
 
+const transientSuggestionKey = getTransientSuggestionKey();
+
+function hasSuggestionType(value: unknown): value is { type?: string } {
+  return !!value && typeof value === "object" && "type" in value;
+}
+
+function ArticleEditorLeaf({ attributes, children, leaf }: RenderLeafProps) {
+  const editor = useEditorRef();
+  const suggestionApi = editor.getApi(SuggestionPlugin).suggestion;
+  const leafRecord = leaf as Record<string, unknown>;
+  const suggestionData = suggestionApi.suggestionData(
+    leaf as Parameters<typeof suggestionApi.suggestionData>[0],
+  );
+  const suggestionType = hasSuggestionType(suggestionData)
+    ? suggestionData.type
+    : null;
+  const isSuggestionSpan = !!leafRecord[KEYS.suggestion];
+
+  return (
+    <span
+      {...attributes}
+      className={cn(
+        attributes.className,
+        isSuggestionSpan &&
+          suggestionType !== "remove" &&
+          "rounded bg-emerald-100/85 px-0.5 ring-1 ring-emerald-200/80 selection:bg-emerald-200/95 dark:bg-emerald-500/20 dark:ring-emerald-400/25 dark:selection:bg-emerald-400/35",
+        isSuggestionSpan &&
+          suggestionType === "remove" &&
+          "text-foreground/75 rounded bg-rose-100/85 px-0.5 line-through decoration-rose-500 decoration-2 selection:bg-rose-200/95 dark:bg-rose-500/20 dark:selection:bg-rose-400/35",
+      )}
+      data-suggestion-leaf={
+        isSuggestionSpan ? (suggestionType ?? "") : undefined
+      }
+    >
+      {children}
+    </span>
+  );
+}
+
+function hasPendingAIState(value: DocumentContent): boolean {
+  const visit = (node: Record<string, unknown>): boolean => {
+    if (node[AI_PREVIEW_KEY] || node[KEYS.ai] || node[transientSuggestionKey]) {
+      return true;
+    }
+
+    if (!Array.isArray(node.children)) {
+      return false;
+    }
+
+    return node.children.some(
+      (child) => typeof child === "object" && child !== null && visit(child),
+    );
+  };
+
+  return value.some((node) => visit(node));
+}
+
 export function ArticleEditor({
   documentId,
   title,
   value,
 }: ArticleEditorProps) {
+  const normalizedValue = useMemo(
+    () => normalizeDocumentContent(value),
+    [value],
+  );
   const [draftTitle, setDraftTitle] = useState(title);
-  const [draftContent, setDraftContent] = useState(value);
+  const [draftContent, setDraftContent] = useState(normalizedValue);
   const lastSavedSnapshotRef = useRef(
     JSON.stringify({
       content: value,
@@ -48,10 +122,17 @@ export function ArticleEditor({
   );
   const editor = usePlateEditor(
     {
-      plugins: [BasicBlocksPlugin, BasicMarksPlugin, floatingToolbarPlugin],
-      value,
+      plugins: [
+        ...ArticleEditorCorePlugins,
+        BlockSelectionPlugin,
+        SuggestionPlugin,
+        ArticleEditorAIPlugin,
+        ArticleEditorAIChatPlugin,
+        floatingToolbarPlugin,
+      ],
+      value: normalizedValue,
     },
-    [floatingToolbarPlugin, value],
+    [floatingToolbarPlugin, normalizedValue],
   );
 
   const draftSnapshot = useMemo(
@@ -65,6 +146,10 @@ export function ArticleEditor({
 
   useEffect(() => {
     if (draftSnapshot === lastSavedSnapshotRef.current) {
+      return;
+    }
+
+    if (hasPendingAIState(draftContent)) {
       return;
     }
 
@@ -99,7 +184,7 @@ export function ArticleEditor({
         <div className="text-foreground mx-auto w-full max-w-4xl px-2 pt-16 pb-24 md:px-10 md:pt-6">
           <Input
             aria-label="标题"
-            className="placeholder:text-muted-foreground border-b-foreground/5 mb-2 h-auto rounded-none border-0 border-b! px-0 pb-4 text-2xl! leading-tight font-semibold shadow-none focus-visible:ring-0 md:mb-4"
+            className="placeholder:text-muted-foreground border-b-foreground/5 mb-3 h-auto rounded-none border-0 border-b! px-0 pb-4 leading-tight font-semibold shadow-none focus-visible:ring-0 md:mb-5 md:text-3xl!"
             onChange={(event) => {
               setDraftTitle(event.target.value);
             }}
@@ -107,8 +192,9 @@ export function ArticleEditor({
             value={draftTitle}
           />
           <PlateContent
-            className="placeholder:text-muted-foreground [&_blockquote]:border-border [&_blockquote]:text-muted-foreground min-h-140 text-base leading-7 outline-none focus-visible:outline-none [&_blockquote]:border-l-2 [&_blockquote]:pl-4 [&_h1]:mt-8 [&_h1]:mb-4 [&_h1]:text-[30px] [&_h1]:leading-tight [&_h1]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3 [&_h2]:text-[26px] [&_h2]:leading-tight [&_h2]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_h3]:text-[22px] [&_h3]:leading-snug [&_h3]:font-semibold [&_p]:my-2"
+            className="placeholder:text-muted-foreground [&_blockquote]:border-border [&_blockquote]:text-muted-foreground min-h-140 text-base leading-7 outline-none focus-visible:outline-none [&_blockquote]:border-l-2 [&_blockquote]:pl-4 [&_h1]:mt-8 [&_h1]:mb-4 [&_h1]:text-2xl [&_h1]:leading-tight [&_h1]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3 [&_h2]:text-xl [&_h2]:leading-tight [&_h2]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_h3]:text-lg [&_h3]:leading-snug [&_h3]:font-semibold [&_p]:my-2"
             placeholder="开始写作..."
+            renderLeaf={(props) => <ArticleEditorLeaf {...props} />}
           />
         </div>
       </Plate>

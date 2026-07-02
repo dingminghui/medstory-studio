@@ -8,6 +8,7 @@ export type DocumentText = {
 };
 
 export type DocumentElement = {
+  id?: string;
   type: string;
   children: DocumentNode[];
   [key: string]: unknown;
@@ -28,6 +29,7 @@ const DocumentNodeSchema: z.ZodType<DocumentNode> = z.lazy(() =>
 
 const DocumentElementSchema: z.ZodType<DocumentElement> = z
   .object({
+    id: z.string().optional(),
     type: z.string(),
     children: z.array(DocumentNodeSchema),
   })
@@ -93,15 +95,47 @@ const DEFAULT_DOCUMENT_SECTIONS = [
   "结论",
 ];
 
+export function generateDocumentNodeId() {
+  if (typeof globalThis.crypto?.randomUUID === "function") {
+    return globalThis.crypto.randomUUID();
+  }
+
+  return `block-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function isDocumentElement(node: DocumentNode): node is DocumentElement {
+  return "type" in node && Array.isArray(node.children);
+}
+
+function normalizeDocumentNode(node: DocumentNode): DocumentNode {
+  if (!isDocumentElement(node)) {
+    return node;
+  }
+
+  return {
+    ...node,
+    id: node.id ?? generateDocumentNodeId(),
+    children: node.children.map(normalizeDocumentNode),
+  };
+}
+
+export function normalizeDocumentContent(
+  content: DocumentContent,
+): DocumentContent {
+  return content.map((node) => normalizeDocumentNode(node) as DocumentElement);
+}
+
 export function createDefaultDocumentContent(): DocumentContent {
-  return DEFAULT_DOCUMENT_SECTIONS.flatMap((section) => [
-    {
-      type: "h3",
-      children: [{ text: section }],
-    },
-    {
-      type: "p",
-      children: [{ text: "" }],
-    },
-  ]);
+  return normalizeDocumentContent(
+    DEFAULT_DOCUMENT_SECTIONS.flatMap((section) => [
+      {
+        type: "h3",
+        children: [{ text: section }],
+      },
+      {
+        type: "p",
+        children: [{ text: "" }],
+      },
+    ]),
+  );
 }
