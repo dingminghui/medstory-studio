@@ -8,8 +8,13 @@ import {
   useState,
 } from "react";
 
+import type { KnowledgeBasePaperResponse } from "@/lib/knowledge-base-model";
+
 type KnowledgeBasePanelContextValue = {
   open: boolean;
+  selectedPaper: KnowledgeBasePaperResponse | null;
+  previewPaper: (paper: KnowledgeBasePaperResponse) => void;
+  setSelectedPaper: (paper: KnowledgeBasePaperResponse | null) => void;
   setOpen: (open: boolean) => void;
   toggle: () => void;
 };
@@ -23,16 +28,24 @@ export function KnowledgeBasePanelProvider({
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  const [selectedPaper, setSelectedPaper] =
+    useState<KnowledgeBasePaperResponse | null>(null);
   const toggle = useCallback(() => {
     setOpen((currentOpen) => !currentOpen);
+  }, []);
+  const previewPaper = useCallback((paper: KnowledgeBasePaperResponse) => {
+    setSelectedPaper(paper);
   }, []);
   const value = useMemo(
     () => ({
       open,
+      previewPaper,
+      selectedPaper,
+      setSelectedPaper,
       setOpen,
       toggle,
     }),
-    [open, toggle],
+    [open, previewPaper, selectedPaper, toggle],
   );
 
   return (

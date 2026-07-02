@@ -6,7 +6,9 @@ import {
   LibraryBigIcon,
   PlusIcon,
 } from "lucide-react";
+import { useEditorMounted, useEditorRef } from "platejs/react";
 
+import { createPaperReferenceElement } from "@/components/article-editor-paper-reference";
 import type { KnowledgeBasePaperResponse } from "@/lib/knowledge-base-model";
 import { formatDate } from "@/lib/utils/date";
 import { Button } from "@/components/ui/button";
@@ -19,6 +21,32 @@ export function KnowledgeBasePaperRow({
   onView: () => void;
   paper: KnowledgeBasePaperResponse;
 }) {
+  const editor = useEditorRef();
+  const editorMounted = useEditorMounted();
+
+  const handleAdd = () => {
+    if (
+      !editorMounted ||
+      editor.meta.isFallback ||
+      !editor.api.isFocused() ||
+      !editor.selection
+    ) {
+      return;
+    }
+
+    const currentBlockPath = editor.api.block()?.[1];
+    const shouldInsertTrailingSpace =
+      currentBlockPath &&
+      editor.api.isEnd(editor.selection.focus, currentBlockPath);
+
+    editor.tf.insertNodes(createPaperReferenceElement(paper));
+    editor.tf.move({ unit: "offset" });
+
+    if (shouldInsertTrailingSpace) {
+      editor.tf.insertText(" ");
+    }
+  };
+
   return (
     <article className="-mx-1 px-1 py-4 transition-colors hover:bg-sidebar-accent/35">
       <div className="line-clamp-2 text-sm leading-6 font-medium">
@@ -38,7 +66,15 @@ export function KnowledgeBasePaperRow({
         <span className="text-nowrap">IF {paper.ifValue.toFixed(1)}</span>
       </div>
       <div className="mt-3 flex items-center gap-2">
-        <Button size="xs" type="button" variant="outline">
+        <Button
+          onClick={handleAdd}
+          onMouseDown={(event) => {
+            event.preventDefault();
+          }}
+          size="xs"
+          type="button"
+          variant="outline"
+        >
           <PlusIcon data-icon="inline-start" />
           添加
         </Button>

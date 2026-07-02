@@ -21,6 +21,7 @@ import {
   ArticleEditorFloatingToolbar,
   ArticleEditorToolbar,
 } from "@/components/article-editor-toolbar";
+import { ArticleEditorPaperReferencePlugin } from "@/components/article-editor-paper-reference";
 import { Input } from "@/components/ui/input";
 import { ArticleEditorCorePlugins } from "@/lib/article-editor-kit";
 import type { DocumentContent } from "@/lib/document-model";
@@ -128,6 +129,7 @@ export function ArticleEditor({
         SuggestionPlugin,
         ArticleEditorAIPlugin,
         ArticleEditorAIChatPlugin,
+        ArticleEditorPaperReferencePlugin,
         floatingToolbarPlugin,
       ],
       value: normalizedValue,
