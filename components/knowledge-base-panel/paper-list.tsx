@@ -1,18 +1,21 @@
 "use client";
 
 import type { KnowledgeBasePaperResponse } from "@/lib/knowledge-base-model";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { KnowledgeBasePaperRow } from "./paper-row";
 
 type KnowledgeBasePaperListProps = {
   isError: boolean;
   isPending: boolean;
+  onViewPaper: (paper: KnowledgeBasePaperResponse) => void;
   papers: KnowledgeBasePaperResponse[] | undefined;
 };
 
 export function KnowledgeBasePaperList({
   isError,
   isPending,
+  onViewPaper,
   papers,
 }: KnowledgeBasePaperListProps) {
   return (
@@ -22,7 +25,13 @@ export function KnowledgeBasePaperList({
       {isError ? <KnowledgeBasePaperError /> : null}
 
       {papers?.map((paper) => (
-        <KnowledgeBasePaperRow key={paper.id} paper={paper} />
+        <KnowledgeBasePaperRow
+          key={paper.id}
+          onView={() => {
+            onViewPaper(paper);
+          }}
+          paper={paper}
+        />
       ))}
     </div>
   );
@@ -52,8 +61,8 @@ function KnowledgeBasePaperError() {
 function KnowledgeBasePaperPlaceholder() {
   return (
     <div className="px-1 py-4">
-      <div className="h-5 w-4/5 animate-pulse rounded bg-muted" />
-      <div className="mt-3 h-4 w-2/3 animate-pulse rounded bg-muted" />
+      <Skeleton className="h-5 w-4/5" />
+      <Skeleton className="mt-3 h-4 w-2/3" />
     </div>
   );
 }

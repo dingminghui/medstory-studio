@@ -1,17 +1,22 @@
 "use client";
 
+import { useState } from "react";
 import { ArrowLeftIcon } from "lucide-react";
 
 import { useKnowledgeBasePapers } from "@/hooks/use-knowledge-base-papers";
+import type { KnowledgeBasePaperResponse } from "@/lib/knowledge-base-model";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { useKnowledgeBasePanel } from "./context";
+import { KnowledgeBasePaperDetailSheet } from "./paper-detail-sheet";
 import { KnowledgeBasePaperList } from "./paper-list";
 
 export function KnowledgeBasePanelSurface() {
   const { open, setOpen } = useKnowledgeBasePanel();
   const papersQuery = useKnowledgeBasePapers(open);
+  const [selectedPaper, setSelectedPaper] =
+    useState<KnowledgeBasePaperResponse | null>(null);
 
   return (
     <>
@@ -37,9 +42,20 @@ export function KnowledgeBasePanelSurface() {
         <KnowledgeBasePaperList
           isError={papersQuery.isError}
           isPending={papersQuery.isPending}
+          onViewPaper={setSelectedPaper}
           papers={papersQuery.data}
         />
       </ScrollArea>
+
+      <KnowledgeBasePaperDetailSheet
+        onOpenChange={(nextOpen) => {
+          if (!nextOpen) {
+            setSelectedPaper(null);
+          }
+        }}
+        open={Boolean(selectedPaper)}
+        paper={selectedPaper}
+      />
     </>
   );
 }

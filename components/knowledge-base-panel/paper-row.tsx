@@ -1,14 +1,22 @@
 "use client";
 
-import { CalendarDaysIcon, LibraryBigIcon } from "lucide-react";
+import {
+  CalendarDaysIcon,
+  EyeIcon,
+  LibraryBigIcon,
+  PlusIcon,
+} from "lucide-react";
 
 import type { KnowledgeBasePaperResponse } from "@/lib/knowledge-base-model";
 import { formatDate } from "@/lib/utils/date";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 export function KnowledgeBasePaperRow({
+  onView,
   paper,
 }: {
+  onView: () => void;
   paper: KnowledgeBasePaperResponse;
 }) {
   return (
@@ -28,6 +36,16 @@ export function KnowledgeBasePaperRow({
         </div>
         <Separator className="h-3" orientation="vertical" />
         <span className="text-nowrap">IF {paper.ifValue.toFixed(1)}</span>
+      </div>
+      <div className="mt-3 flex items-center gap-2">
+        <Button size="xs" type="button" variant="outline">
+          <PlusIcon data-icon="inline-start" />
+          添加
+        </Button>
+        <Button onClick={onView} size="xs" type="button" variant="ghost">
+          <EyeIcon data-icon="inline-start" />
+          查看
+        </Button>
       </div>
     </article>
   );
